@@ -24,8 +24,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AppUserDto createUserService(AppUserDto appUserDto) {
+
         AppUser appUser = dtoToEntity(appUserDto);
-        appUser.setPassword(BCrypt.hashpw(appUserDto.getPassword(),BCrypt.gensalt(10)));
+        appUser.setPassword(BCrypt.hashpw(appUserDto.getPassword(), BCrypt.gensalt(10)));
         AppUser savedUser = appUserRepository.save(appUser);
         AppUserDto aud = entityToDto(savedUser);
         return aud;
@@ -34,17 +35,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public String verifyLogin(LoginDto loginDto) {
         Optional<AppUser> byUserName = appUserRepository.findByUserName(loginDto.getUserName());
-        if(byUserName.isPresent()){
+        if (byUserName.isPresent()) {
             AppUser appUser = byUserName.get();
-           if(BCrypt.checkpw(loginDto.getPassword(),appUser.getPassword())){
-               String token = jwtService.generateToken(appUser);
-               return token;
-           }
+            if (BCrypt.checkpw(loginDto.getPassword(), appUser.getPassword())) {
+                String token = jwtService.generateToken(appUser);
+                return token;
+            }
         }
         return null;
     }
 
-    private AppUser dtoToEntity(AppUserDto aud){
+    private AppUser dtoToEntity(AppUserDto aud) {
         AppUser au = new AppUser();
         au.setName(aud.getName());
         au.setUserName(aud.getUserName());
@@ -52,15 +53,15 @@ public class UserServiceImpl implements UserService {
         au.setPassword(aud.getPassword());
         return au;
     }
-    private AppUserDto entityToDto(AppUser au){
+
+    private AppUserDto entityToDto(AppUser au) {
         AppUserDto aud = new AppUserDto();
         aud.setId(au.getId());
-aud.setName(au.getName());
-aud.setUserName(au.getUserName());
-aud.setEmail(au.getEmail());
-aud.setPassword(au.getPassword());
-
-return aud;
+        aud.setName(au.getName());
+        aud.setUserName(au.getUserName());
+        aud.setEmail(au.getEmail());
+        aud.setPassword(au.getPassword());
+        return aud;
 
     }
 }

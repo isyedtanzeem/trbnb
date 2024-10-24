@@ -14,7 +14,7 @@ import java.util.Date;
 public class JWTservice {
 
     @Value("${jwt.algorithm.key}")
-private String algorithmKey;
+    private String algorithmKey;
     @Value("${jwt.issuer}")
     private String issuer;
     @Value("${jwt.expiry.duration}")
@@ -23,23 +23,23 @@ private String algorithmKey;
     private Algorithm algorithm;
 
     @PostConstruct
-    public void postConstruct(){
+    public void postConstruct() {
         algorithm = Algorithm.HMAC256(algorithmKey);
     }
 
     public final String USER_NAME = "username";
 
-    public String generateToken(AppUser appUser){
+    public String generateToken(AppUser appUser) {
         return JWT.create()
-                .withClaim(USER_NAME,appUser.getUserName())
+                .withClaim(USER_NAME, appUser.getUserName())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expiryTime))
                 .withIssuer(issuer)
                 .sign(algorithm);
     }
 
-    public  String getUserName(String token){
+    public String getUserName(String token) {
 
         DecodedJWT decodedJWT = JWT.require(algorithm).withIssuer(issuer).build().verify(token);
-        return decodedJWT.getClaim(USER_NAME).toString();
+        return decodedJWT.getClaim(USER_NAME).asString();
     }
 }
